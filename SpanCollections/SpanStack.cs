@@ -1,8 +1,6 @@
 ﻿namespace SpanCollections;
 
 using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 public readonly ref struct SpanStack<T>
 where T : unmanaged
@@ -10,39 +8,38 @@ where T : unmanaged
     public const int MinNumBytes = sizeof(int) * NumPointers;
     const int NumPointers = 1;
 
-    readonly Span<T> _values;
-    readonly Span<int> _pointers;
+    readonly SpanCollectionCore<T> _core;
 
     public SpanStack(Span<byte> bytes)
     {
         if (bytes.Length < MinNumBytes)
             throw new ArgumentException($"This stack requires at least {MinNumBytes} bytes", nameof(bytes));
-        _pointers = MemoryMarshal.Cast<byte, int>(bytes)[..NumPointers];
-        bytes = bytes[(Unsafe.SizeOf<int>() * NumPointers)..];
-        _values = MemoryMarshal.Cast<byte, T>(bytes);
+        _core = new SpanCollectionCore<T>(bytes, NumPointers);
     }
 
-    public int Capacity => _values.Length;
+    public int Capacity => Values.Length;
 
     public int Count => Math.Max(0, Math.Min(Capacity, FreePointer));
 
-    ref int FreePointer => ref _pointers[0];
+    ref int FreePointer => ref _core.Pointers[0];
 
-    public SpanEnumerator<T> GetEnumerator() => new(true, _values[..FreePointer]);
+    Span<T> Values => _core.Values;
+
+    public SpanEnumerator<T> GetEnumerator() => new(true, Values[..FreePointer]);
 
     public void Push(in T value)
     {
         ref var free = ref FreePointer;
-        _values[free] = value;
+        Values[free] = value;
         free++;
     }
 
     public bool TryPeek(out T value)
     {
         ref var free = ref FreePointer;
-        if (free > 0 && free <= _values.Length)
+        if (free > 0 && free <= Values.Length)
         {
-            value = _values[free - 1];
+            value = Values[free - 1];
             return true;
         }
         value = default;
@@ -52,11 +49,11 @@ where T : unmanaged
     public bool TryPop(out T value)
     {
         ref var free = ref FreePointer;
-        if (free > 0 && free <= _values.Length)
+        if (free > 0 && free <= Values.Length)
         {
             free--;
-            value = _values[free];
-            _values[free] = default;
+            value = Values[free];
+            Values[free] = default;
             return true;
         }
         value = default;
