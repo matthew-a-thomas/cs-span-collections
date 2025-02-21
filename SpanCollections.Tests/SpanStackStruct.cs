@@ -98,6 +98,30 @@ public class SpanStackStruct
             bytes[4] = 2;
             Assert.Equal(2, current);
         }
+
+        [Fact]
+        public void CorrectlyEnumerateMultipleElements()
+        {
+            var stack = new SpanStack<int>(new byte[64]);
+            var capacity = stack.Capacity;
+            Assert.True(capacity > 1);
+            for (var i = 0; i < capacity; i++)
+            {
+                stack.Push(i);
+            }
+
+            var enumeratedValues = new List<int>();
+            foreach (var value in stack)
+            {
+                enumeratedValues.Add(value);
+            }
+
+            Assert.Equal(capacity, enumeratedValues.Count);
+            Assert.Equal(
+                Enumerable.Range(0, capacity).Reverse(),
+                enumeratedValues
+            );
+        }
     }
 
     public class PushMethodShould
