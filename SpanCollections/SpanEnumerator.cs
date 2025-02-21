@@ -2,20 +2,12 @@
 
 using System;
 
-public ref struct SpanEnumerator<T>
+public ref struct SpanEnumerator<T>(
+    bool backward,
+    ReadOnlySpan<T> span)
 {
-    readonly bool _backward;
-    int? _index;
-    readonly ReadOnlySpan<T> _span;
-
-    public SpanEnumerator(
-        bool backward,
-        ReadOnlySpan<T> span)
-    {
-        _backward = backward;
-        _index = null;
-        _span = span;
-    }
+    int? _index = null;
+    readonly ReadOnlySpan<T> _span = span;
 
     public ref readonly T Current => ref _span[_index!.Value];
 
@@ -23,13 +15,13 @@ public ref struct SpanEnumerator<T>
     {
         if (_index is {} index)
         {
-            _index = _backward
+            _index = backward
                 ? index - 1
                 : index + 1;
         }
         else
         {
-            _index = _backward
+            _index = backward
                 ? _span.Length - 1
                 : 0;
         }
