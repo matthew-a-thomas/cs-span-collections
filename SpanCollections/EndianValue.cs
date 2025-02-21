@@ -3,16 +3,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-public interface IReadableValue<out T>
-{
-    T Value { get; }
-}
-
-public interface IWriteableValue<in T>
-{
-    T Value { set; }
-}
-
 /// <summary>
 /// Encapsulates a single value that is stored in memory in the given <typeparamref name="TEndianness"/>.
 /// </summary>
