@@ -63,7 +63,7 @@ public class CrcSpanClass
         {
             var bytes = new byte[8];
             new CrcSpan<int>(bytes).Crc32 = 42U;
-            Assert.Equal(42U, new CrcSpan<int>(bytes).Crc32);
+            Assert.Equal<uint>(42U, new CrcSpan<int>(bytes).Crc32);
         }
     }
 

@@ -21,13 +21,13 @@ where T : unmanaged
 
     public int Count => Math.Max(0, Math.Min(Capacity, FreePointer));
 
-    ref int FreePointer => ref _core.Pointers[0];
+    ref EndianValue<LittleEndian, int> FreePointer => ref _core.Pointers[0];
 
     Span<T> Values => _core.Values;
 
-    public ref T this[Index index] => ref Values[..FreePointer][index];
+    public ref T this[Index index] => ref Values[..FreePointer.Value][index];
 
-    public Span<T> this[Range range] => Values[..FreePointer][range];
+    public Span<T> this[Range range] => Values[..FreePointer.Value][range];
 
     public void Add(in T value)
     {
@@ -43,7 +43,7 @@ where T : unmanaged
         free = 0;
     }
 
-    public SpanEnumerator<T> GetEnumerator() => new(false, Values[..FreePointer]);
+    public SpanEnumerator<T> GetEnumerator() => new(false, Values[..FreePointer.Value]);
 
     public void RemoveAt(int index)
     {

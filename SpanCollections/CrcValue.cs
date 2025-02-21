@@ -8,7 +8,7 @@ public readonly struct CrcValue<T>(in T value)
 {
     public readonly T Value = value;
 
-    public readonly uint Crc32 = Hash(in value);
+    public readonly EndianValue<LittleEndian, uint> Crc32 = Hash(in value);
 
     static uint Hash(in T value) => System.IO.Hashing.Crc32.HashToUInt32(MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(in value, 1)));
 

@@ -14,7 +14,7 @@ public class CrcValueStruct
             var i = 42;
             var crc32 = Crc32.HashToUInt32(MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref i, 1)));
             CrcValue<int> value = i;
-            Assert.Equal(crc32, value.Crc32);
+            Assert.Equal<uint>(crc32, value.Crc32);
         }
     }
 

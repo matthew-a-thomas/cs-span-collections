@@ -21,11 +21,11 @@ where T : unmanaged
 
     public int Count => Math.Max(0, Math.Min(Capacity, FreePointer));
 
-    ref int FreePointer => ref _core.Pointers[0];
+    ref EndianValue<LittleEndian, int> FreePointer => ref _core.Pointers[0];
 
     Span<T> Values => _core.Values;
 
-    public SpanEnumerator<T> GetEnumerator() => new(true, Values[..FreePointer]);
+    public SpanEnumerator<T> GetEnumerator() => new(true, Values[..FreePointer.Value]);
 
     public void Push(in T value)
     {
