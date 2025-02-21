@@ -12,29 +12,42 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
     where TEndianness : IEndianness
 {
     /// <summary>
-    /// The value as stored in the given <typeparamref name="TEndianness"/>.
+    /// A blob holding the value in the given <typeparamref name="TEndianness"/>.
     /// </summary>
-    T _value;
+    public Blob<T> Blob;
+
+    ref T UnsafeBlobContents => ref MemoryMarshal.Cast<Blob<T>, T>(MemoryMarshal.CreateSpan(ref Blob, 1))[0];
 
     /// <summary>
     /// Gets/sets the value.
     /// </summary>
-    /// <remarks>
-    /// The endianness of the underlying value is swapped as needed while reading and writing, such that it is always
-    /// stored in memory in the given <typeparamref name="TEndianness"/>.
-    /// </remarks>
     public T Value
     {
         get
         {
-            var value = _value;
-            MaybeSwap(ref value);
-            return value;
+            if (!TEndianness.ShouldSwapEndianness)
+            {
+                return UnsafeBlobContents;
+            }
+
+            var clone = Blob;
+            var bytes = clone.AsBytes();
+            bytes.Reverse();
+            return MemoryMarshal.Cast<byte, T>(bytes)[0];
         }
         set
         {
-            MaybeSwap(ref value);
-            _value = value;
+            if (!TEndianness.ShouldSwapEndianness)
+            {
+                UnsafeBlobContents = value;
+                return;
+            }
+
+            Blob<T> blob = default;
+            var bytes = blob.AsBytes();
+            MemoryMarshal.Cast<byte, T>(bytes)[0] = value;
+            bytes.Reverse();
+            Blob = blob;
         }
     }
 
@@ -60,12 +73,6 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
         obj is IReadableValue<T> other && Equals(in other);
 
     public override int GetHashCode() => Value.GetHashCode();
-
-    static void MaybeSwap(ref T value)
-    {
-        if (TEndianness.ShouldSwapEndianness)
-            MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref value, 1)).Reverse();
-    }
 
     public static bool operator ==(in EndianValue<TEndianness, T> left, in EndianValue<TEndianness, T> right) => left.Value.Equals(right.Value);
     public static bool operator !=(in EndianValue<TEndianness, T> left, in EndianValue<TEndianness, T> right) => !(left == right);

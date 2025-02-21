@@ -2,11 +2,21 @@
 
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Xunit;
 
 public class EndianValueStruct
 {
+    [Fact]
+    public void ShouldHaveSameSizeAsTypeParameter()
+    {
+        Assert.Equal(
+            Unsafe.SizeOf<Guid>(),
+            Unsafe.SizeOf<EndianValue<NativeEndian, Guid>>()
+        );
+    }
+
     [Fact]
     public void ShouldSwapUnderlyingBytesWhenNecessary()
     {
