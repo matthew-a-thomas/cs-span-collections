@@ -1,5 +1,6 @@
 ﻿namespace SpanCollections.Tests;
 
+using System;
 using System.Linq;
 using Xunit;
 
@@ -54,5 +55,17 @@ public class SpanListStruct
         Assert.True(enumerator.MoveNext());
         Assert.Equal(8, enumerator.Current);
         Assert.False(enumerator.MoveNext());
+    }
+
+    public class ConstructorShould
+    {
+        [Fact]
+        public void ThrowWhenTooSmall()
+        {
+            Assert.ThrowsAny<ArgumentException>(() =>
+            {
+                _ = new SpanList<byte>(Array.Empty<byte>());
+            });
+        }
     }
 }

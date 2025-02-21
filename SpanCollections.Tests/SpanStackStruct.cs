@@ -52,6 +52,18 @@ public class SpanStackStruct
         );
     }
 
+    public class ConstructorShould
+    {
+        [Fact]
+        public void ThrowWhenTooSmall()
+        {
+            Assert.ThrowsAny<ArgumentException>(() =>
+            {
+                _ = new SpanStack<byte>(Array.Empty<byte>());
+            });
+        }
+    }
+
     public class GetEnumeratorMethodShould
     {
         [Fact]
