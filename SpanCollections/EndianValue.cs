@@ -51,13 +51,31 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
         }
     }
 
+    /// <summary>
+    /// Creates a new <see cref="EndianValue{TEndianness,T}"/> that will have the given value.
+    /// </summary>
     public EndianValue(T value)
     {
         Value = value;
     }
 
-    public EndianValue<TNewEndianness, T> ConvertTo<TNewEndianness>()
-        where TNewEndianness : IEndianness => Value;
+    /// <summary>
+    /// Creates a new <see cref="EndianValue{TEndianness,T}"/> using the given underlying blob.
+    /// </summary>
+    public EndianValue(Blob<T> blob)
+    {
+        Blob = blob;
+    }
+
+    /// <summary>
+    /// Returns a new <see cref="EndianValue{TNewEndianness,T}"/> where the underlying endianness has been changed to
+    /// <typeparamref name="TNewEndianness"/>.
+    /// </summary>
+    public EndianValue<TNewEndianness, T> As<TNewEndianness>()
+        where TNewEndianness : IEndianness =>
+        TNewEndianness.ShouldSwapEndianness == TEndianness.ShouldSwapEndianness
+            ? new EndianValue<TNewEndianness, T>(Blob)
+            : new EndianValue<TNewEndianness, T>(Value);
 
     public bool Equals(T other) =>
         Value.Equals(other);

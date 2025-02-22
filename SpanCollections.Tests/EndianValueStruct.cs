@@ -31,13 +31,13 @@ public class EndianValueStruct
         Assert.NotEqual<int>(42, nativeEndianValue);
     }
 
-    public class ConvertToMethodShould
+    public class AsMethodShould
     {
         [Fact]
         public void SwapUnderlyingBytesWhenNecessary()
         {
             EndianValue<NativeEndian, int> nativeValue = 42;
-            var notNativeValue = nativeValue.ConvertTo<Not<NativeEndian>>();
+            var notNativeValue = nativeValue.As<Not<NativeEndian>>();
             Assert.Equal(42, notNativeValue.Value);
             Assert.Equal(
                 MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref nativeValue, 1)).ToArray(),
