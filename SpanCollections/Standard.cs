@@ -1,7 +1,7 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿namespace SpanCollections;
 
-namespace SpanCollections;
+using System;
+using System.Runtime.InteropServices;
 
 public class Standard<TEndianness, TBitOrder> : IFormat
     where TEndianness : IEndianness

@@ -1,7 +1,6 @@
-﻿using System;
+﻿namespace SpanCollections;
 
-namespace SpanCollections;
-
+using System;
 using System.Runtime.InteropServices;
 
 /// <summary>

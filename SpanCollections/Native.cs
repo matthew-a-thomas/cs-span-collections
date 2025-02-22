@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿namespace SpanCollections;
 
-namespace SpanCollections;
+using System.Runtime.InteropServices;
 
 public sealed class Native : IFormat
 {

@@ -1,6 +1,6 @@
-﻿using System;
+﻿namespace SpanCollections;
 
-namespace SpanCollections;
+using System;
 
 public static class ByteHelpers
 {

@@ -1,6 +1,6 @@
-﻿using Xunit;
+﻿namespace SpanCollections.Tests;
 
-namespace SpanCollections.Tests;
+using Xunit;
 
 public class ByteHelpersClass
 {
