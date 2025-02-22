@@ -1,4 +1,4 @@
-﻿namespace SpanCollections;
+﻿namespace SpanCollections.Formats.BitOrders;
 
 public interface IBitOrder
 {

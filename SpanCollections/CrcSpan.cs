@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Formats;
 
 public readonly ref struct CrcSpan<T>
     where T : unmanaged

@@ -1,4 +1,4 @@
-﻿namespace SpanCollections;
+﻿namespace SpanCollections.Formats;
 
 using System.Runtime.InteropServices;
 

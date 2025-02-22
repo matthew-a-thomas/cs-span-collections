@@ -1,6 +1,7 @@
 ﻿namespace SpanCollections;
 
 using System.Runtime.InteropServices;
+using Formats;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public readonly struct CrcValue<T>(in T value)

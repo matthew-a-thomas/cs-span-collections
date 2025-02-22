@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Formats;
 
 readonly ref struct SpanCollectionCore<T>(Span<byte> bytes, int numPointers)
     where T : unmanaged

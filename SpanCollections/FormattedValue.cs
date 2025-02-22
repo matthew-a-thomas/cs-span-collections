@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using Formats;
 
 /// <summary>
 /// Encapsulates a single value that is stored in memory in the given <typeparamref name="TFormat"/>.

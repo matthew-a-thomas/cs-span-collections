@@ -4,6 +4,9 @@ using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using SpanCollections.Formats;
+using SpanCollections.Formats.BitOrders;
+using SpanCollections.Formats.Endianness;
 using Xunit;
 
 public class FormattedValueStruct

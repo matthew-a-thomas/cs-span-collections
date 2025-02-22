@@ -1,5 +1,6 @@
-﻿namespace SpanCollections.Tests;
+﻿namespace SpanCollections.Tests.Formats.Endianness;
 
+using SpanCollections.Formats.Endianness;
 using Xunit;
 
 public class NotNativeEndianClass

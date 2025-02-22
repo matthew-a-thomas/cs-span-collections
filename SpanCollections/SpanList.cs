@@ -1,6 +1,7 @@
 ﻿namespace SpanCollections;
 
 using System;
+using Formats;
 
 public readonly ref struct SpanList<T>
 where T : unmanaged

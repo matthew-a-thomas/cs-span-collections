@@ -1,7 +1,9 @@
-﻿namespace SpanCollections;
+﻿namespace SpanCollections.Formats;
 
 using System;
 using System.Runtime.InteropServices;
+using BitOrders;
+using Endianness;
 
 public class Standard<TEndianness, TBitOrder> : IFormat
     where TEndianness : IEndianness
