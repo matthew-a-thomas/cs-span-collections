@@ -4,5 +4,5 @@ using System;
 
 public sealed class LittleEndian : IEndianness
 {
-    public static bool ShouldSwapEndianness => !BitConverter.IsLittleEndian;
+    public static bool ShouldReverseBytes => !BitConverter.IsLittleEndian;
 }

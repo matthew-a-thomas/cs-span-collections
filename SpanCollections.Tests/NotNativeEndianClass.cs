@@ -2,14 +2,14 @@
 
 using Xunit;
 
-public class NativeEndianClass
+public class NotNativeEndianClass
 {
     public class ShouldSwapEndiannessPropertyShould
     {
         [Fact]
-        public void ReturnFalse()
+        public void ReturnTrue()
         {
-            Assert.False(NativeEndian.ShouldReverseBytes);
+            Assert.True(NotNativeEndian.ShouldReverseBytes);
         }
     }
 }

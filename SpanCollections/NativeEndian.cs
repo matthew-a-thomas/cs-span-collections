@@ -2,5 +2,5 @@
 
 public sealed class NativeEndian : IEndianness
 {
-    public static bool ShouldSwapEndianness => false;
+    public static bool ShouldReverseBytes => false;
 }

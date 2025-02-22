@@ -13,7 +13,7 @@ public class EndianValueStruct
     {
         Assert.Equal(
             Unsafe.SizeOf<Guid>(),
-            Unsafe.SizeOf<EndianValue<NativeEndian, Guid>>()
+            Unsafe.SizeOf<EndianValue<NativeEndian, NativeBitOrder, Guid>>()
         );
     }
 
@@ -22,8 +22,8 @@ public class EndianValueStruct
     {
         var value = 42;
         var span = MemoryMarshal.CreateSpan(ref value, 1);
-        ref var nativeEndianValue = ref MemoryMarshal.Cast<int, EndianValue<NativeEndian, int>>(span)[0];
-        ref var oppositeEndianValue = ref MemoryMarshal.Cast<int, EndianValue<Not<NativeEndian>, int>>(span)[0];
+        ref var nativeEndianValue = ref MemoryMarshal.Cast<int, EndianValue<NativeEndian, NativeBitOrder, int>>(span)[0];
+        ref var oppositeEndianValue = ref MemoryMarshal.Cast<int, EndianValue<NotNativeEndian, NativeBitOrder, int>>(span)[0];
         Assert.Equal<int>(42, nativeEndianValue);
         Assert.NotEqual<int>(42, oppositeEndianValue);
         oppositeEndianValue = 42;
@@ -36,8 +36,8 @@ public class EndianValueStruct
         [Fact]
         public void SwapUnderlyingBytesWhenNecessary()
         {
-            EndianValue<NativeEndian, int> nativeValue = 42;
-            var notNativeValue = nativeValue.As<Not<NativeEndian>>();
+            EndianValue<NativeEndian, NativeBitOrder, int> nativeValue = 42;
+            var notNativeValue = nativeValue.As<NotNativeEndian, NativeBitOrder>();
             Assert.Equal(42, notNativeValue.Value);
             Assert.Equal(
                 MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref nativeValue, 1)).ToArray(),
@@ -51,8 +51,8 @@ public class EndianValueStruct
         [Fact]
         public void BeBasedOnConvertedValueNotStoredValue()
         {
-            EndianValue<NativeEndian, int> nativeValue = 42;
-            EndianValue<Not<NativeEndian>, int> notNativeValue = 42;
+            EndianValue<NativeEndian, NativeBitOrder, int> nativeValue = 42;
+            EndianValue<NotNativeEndian, NativeBitOrder, int> notNativeValue = 42;
             Assert.True(nativeValue.Equals(in notNativeValue));
             Assert.True(nativeValue == notNativeValue);
             Assert.True(nativeValue.Equals(notNativeValue.Value));
@@ -69,8 +69,8 @@ public class EndianValueStruct
             for (var i = 0; i < 1000; i++)
             {
                 var expected = random.Next();
-                EndianValue<NativeEndian, int> nativeValue = expected;
-                EndianValue<Not<NativeEndian>, int> notNativeValue = expected;
+                EndianValue<NativeEndian, NativeBitOrder, int> nativeValue = expected;
+                EndianValue<NotNativeEndian, NativeBitOrder, int> notNativeValue = expected;
                 Assert.Equal(
                     expected.GetHashCode(),
                     nativeValue.GetHashCode()
@@ -88,8 +88,8 @@ public class EndianValueStruct
         [Fact]
         public void BeOppositeOfEquality()
         {
-            EndianValue<NativeEndian, int> left = 42;
-            EndianValue<NativeEndian, int> right = 43;
+            EndianValue<NativeEndian, NativeBitOrder, int> left = 42;
+            EndianValue<NativeEndian, NativeBitOrder, int> right = 43;
             Assert.False(left == right);
             Assert.True(left != right);
         }
@@ -104,16 +104,16 @@ public class EndianValueStruct
             for (var i = 0; i < 1000; i++)
             {
                 var expected = random.Next();
-                EndianValue<BigEndian, int> a = expected;
+                EndianValue<BigEndian, NativeBitOrder, int> a = expected;
                 Assert.Equal(expected, a.Value);
 
-                EndianValue<LittleEndian, int> b = expected;
+                EndianValue<LittleEndian, NativeBitOrder, int> b = expected;
                 Assert.Equal(expected, b.Value);
 
-                EndianValue<NativeEndian, int> c = expected;
+                EndianValue<NativeEndian, NativeBitOrder, int> c = expected;
                 Assert.Equal(expected, c.Value);
 
-                EndianValue<Not<NativeEndian>, int> d = expected;
+                EndianValue<NotNativeEndian, NativeBitOrder, int> d = expected;
                 Assert.Equal(expected, d.Value);
             }
         }

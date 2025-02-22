@@ -8,7 +8,7 @@ public readonly ref struct CrcSpan<T>
 {
     public const int MinNumBytes = sizeof(uint);
 
-    public readonly ref EndianValue<LittleEndian, uint> Crc32;
+    public readonly ref EndianValue<LittleEndian, MsbFirst, uint> Crc32;
 
     public readonly Span<T> Values;
 
@@ -16,7 +16,7 @@ public readonly ref struct CrcSpan<T>
     {
         if (bytes.Length < MinNumBytes)
             throw new ArgumentException($"Length of {nameof(bytes)} must be at least {MinNumBytes}", nameof(bytes));
-        Crc32 = ref MemoryMarshal.Cast<byte, EndianValue<LittleEndian, uint>>(bytes)[0];
+        Crc32 = ref MemoryMarshal.Cast<byte, EndianValue<LittleEndian, MsbFirst, uint>>(bytes)[0];
         Values = MemoryMarshal.Cast<byte, T>(bytes[MinNumBytes..]);
     }
 

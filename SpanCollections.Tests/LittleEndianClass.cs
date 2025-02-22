@@ -12,7 +12,7 @@ public class LittleEndianClass
         {
             Assert.Equal(
                 !BitConverter.IsLittleEndian,
-                LittleEndian.ShouldSwapEndianness
+                LittleEndian.ShouldReverseBytes
             );
         }
     }

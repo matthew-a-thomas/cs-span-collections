@@ -12,7 +12,7 @@ public class BigEndianClass
         {
             Assert.Equal(
                 BitConverter.IsLittleEndian,
-                BigEndian.ShouldSwapEndianness
+                BigEndian.ShouldReverseBytes
             );
         }
     }

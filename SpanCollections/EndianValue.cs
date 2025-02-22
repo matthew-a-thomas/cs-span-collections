@@ -7,9 +7,10 @@ using System.Runtime.InteropServices;
 /// Encapsulates a single value that is stored in memory in the given <typeparamref name="TEndianness"/>.
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
-public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableValue<T>>, IReadableValue<T>, IWriteableValue<T>
-    where T : unmanaged
+public struct EndianValue<TEndianness, TBitOrder, T> : IEquatable<T>, IEquatable<IReadableValue<T>>, IReadableValue<T>, IWriteableValue<T>
     where TEndianness : IEndianness
+    where TBitOrder : IBitOrder
+    where T : unmanaged
 {
     /// <summary>
     /// A blob holding the value in the given <typeparamref name="TEndianness"/>.
@@ -25,19 +26,29 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
     {
         get
         {
-            if (!TEndianness.ShouldSwapEndianness)
+            if (!TEndianness.ShouldReverseBytes && !TBitOrder.ShouldReverseBits)
             {
                 return UnsafeBlobContents;
             }
 
             var clone = Blob;
             var bytes = clone.AsBytes();
-            bytes.Reverse();
+
+            if (TEndianness.ShouldReverseBytes)
+            {
+                bytes.Reverse();
+            }
+
+            if (TBitOrder.ShouldReverseBits)
+            {
+                ByteHelpers.ReverseBits(bytes);
+            }
+
             return MemoryMarshal.Cast<byte, T>(bytes)[0];
         }
         set
         {
-            if (!TEndianness.ShouldSwapEndianness)
+            if (!TEndianness.ShouldReverseBytes && !TBitOrder.ShouldReverseBits)
             {
                 UnsafeBlobContents = value;
                 return;
@@ -46,13 +57,23 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
             Blob<T> blob = default;
             var bytes = blob.AsBytes();
             MemoryMarshal.Cast<byte, T>(bytes)[0] = value;
-            bytes.Reverse();
+
+            if (TEndianness.ShouldReverseBytes)
+            {
+                bytes.Reverse();
+            }
+
+            if (TBitOrder.ShouldReverseBits)
+            {
+                ByteHelpers.ReverseBits(bytes);
+            }
+
             Blob = blob;
         }
     }
 
     /// <summary>
-    /// Creates a new <see cref="EndianValue{TEndianness,T}"/> that will have the given value.
+    /// Creates a new <see cref="EndianValue{TEndianness,TBitOrder,T}"/> that will have the given value.
     /// </summary>
     public EndianValue(T value)
     {
@@ -60,7 +81,7 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
     }
 
     /// <summary>
-    /// Creates a new <see cref="EndianValue{TEndianness,T}"/> using the given underlying blob.
+    /// Creates a new <see cref="EndianValue{TEndianness,TBitOrder,T}"/> using the given underlying blob.
     /// </summary>
     public EndianValue(Blob<T> blob)
     {
@@ -68,14 +89,16 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
     }
 
     /// <summary>
-    /// Returns a new <see cref="EndianValue{TNewEndianness,T}"/> where the underlying endianness has been changed to
+    /// Returns a new <see cref="EndianValue{TNewEndianness,TNewBitOrder,T}"/> where the underlying endianness has been changed to
     /// <typeparamref name="TNewEndianness"/>.
     /// </summary>
-    public EndianValue<TNewEndianness, T> As<TNewEndianness>()
-        where TNewEndianness : IEndianness =>
-        TNewEndianness.ShouldSwapEndianness == TEndianness.ShouldSwapEndianness
-            ? new EndianValue<TNewEndianness, T>(Blob)
-            : new EndianValue<TNewEndianness, T>(Value);
+    public EndianValue<TNewEndianness, TBitOrder, T> As<TNewEndianness, TNewBitOrder>()
+        where TNewEndianness : IEndianness
+        where TNewBitOrder : IBitOrder =>
+        TNewEndianness.ShouldReverseBytes == TEndianness.ShouldReverseBytes &&
+        TNewBitOrder.ShouldReverseBits == TBitOrder.ShouldReverseBits
+            ? new EndianValue<TNewEndianness, TBitOrder, T>(Blob)
+            : new EndianValue<TNewEndianness, TBitOrder, T>(Value);
 
     public bool Equals(T other) =>
         Value.Equals(other);
@@ -92,8 +115,8 @@ public struct EndianValue<TEndianness, T> : IEquatable<T>, IEquatable<IReadableV
 
     public override int GetHashCode() => Value.GetHashCode();
 
-    public static bool operator ==(in EndianValue<TEndianness, T> left, in EndianValue<TEndianness, T> right) => left.Value.Equals(right.Value);
-    public static bool operator !=(in EndianValue<TEndianness, T> left, in EndianValue<TEndianness, T> right) => !(left == right);
-    public static implicit operator EndianValue<TEndianness, T>(T value) => new(value);
-    public static implicit operator T(EndianValue<TEndianness, T> value) => value.Value;
+    public static bool operator ==(in EndianValue<TEndianness, TBitOrder, T> left, in EndianValue<TEndianness, TBitOrder, T> right) => left.Value.Equals(right.Value);
+    public static bool operator !=(in EndianValue<TEndianness, TBitOrder, T> left, in EndianValue<TEndianness, TBitOrder, T> right) => !(left == right);
+    public static implicit operator EndianValue<TEndianness, TBitOrder, T>(T value) => new(value);
+    public static implicit operator T(EndianValue<TEndianness, TBitOrder, T> value) => value.Value;
 }

@@ -2,5 +2,5 @@
 
 public interface IEndianness
 {
-    public static abstract bool ShouldSwapEndianness { get; }
+    public static abstract bool ShouldReverseBytes { get; }
 }
