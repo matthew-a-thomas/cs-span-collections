@@ -21,7 +21,7 @@ where T : unmanaged
 
     public int Count => Math.Max(0, Math.Min(Capacity, FreePointer));
 
-    ref EndianValue<LittleEndian, MsbFirst, int> FreePointer => ref _core.Pointers[0];
+    ref FormattedValue<X86, int> FreePointer => ref _core.Pointers[0];
 
     Span<T> Values => _core.Values;
 
